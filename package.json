@@ -1,0 +1,21 @@
+{
+  "name": "manoj-m-simple-application-1",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "postinstall": "node scan-files.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "aws-js": "file:",
+    "aws-sdk": "^2.1692.0",
+    "manoj-m-simple-application": "file:",
+    "manoj-m-simple-application-1": "file:"
+  },
+  "bin": {
+    "mycli": "./cmd.js"
+  }
+}

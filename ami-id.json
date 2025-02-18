@@ -1,0 +1,17 @@
+[
+    {
+        "name": "Amazon Linux 2023 AMI",
+        "id": "ami-085ad6ae776d8f09c",
+        "isFreeTier": true
+    },
+    {
+        "name": "Amazon Linux 2 AMI (HVM)",
+        "id": "ami-04681163a08179f28",
+        "isFreeTier": true
+    },
+    {
+        "name": "Ubuntu Server 24.04 LTS (HVM)",
+        "id": "ami-04b4f1a9cf54c11d0",
+        "isFreeTier": true
+    }
+]

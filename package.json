@@ -25,9 +25,6 @@
   "bin": {
     "mycli": "./cmd.js"
   },
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
-  },
   "repository": {
     "url": "https://github.com/Manoj-14/aws-deployment"
   }

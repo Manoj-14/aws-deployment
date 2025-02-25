@@ -1,7 +1,8 @@
 const { DescribeInstancesCommand, CreateKeyPairCommand, DeleteKeyPairCommand, StartInstancesCommand, RunInstancesCommand, TerminateInstancesCommand } = require("@aws-sdk/client-ec2");
 const { ec2Client } = require("./aws-conlig-client");
-const { writeFile, chmod } = require("fs");
+const { writeFile, chmod, readFileSync, unlink } = require("fs");
 const loading = require('loading-cli');
+const { pingAndTestSite, pingAndTestSiteInfinite, checkAvailablity, siteAvailabilityCheck } = require("./service-test");
 
 const getLoader = (message = '') => {
     const load = loading(message);
@@ -77,7 +78,7 @@ const deleteKeyPair = async (keyPairname) => {
         const params = { KeyName: keyPairname }
         const data = await ec2Client.send(new DeleteKeyPairCommand(params)).then((resp) => {
             console.log(`${keyPairname} keypair delete completed`);
-            fs.unlink(filename, (err) => {
+            unlink(filename, (err) => {
                 if (err) {
                     console.error(`Error deleting file: ${err}`);
                 } else {
@@ -111,7 +112,7 @@ const startEc2Instance = async (instanceId) => {
 }
 
 const createInstance = async (instanceName, amiId, instanceType) => {
-
+    const encodeduserData = readFileSync("./initial-user-data.sh").toString("base64");
     const keyPairName = await createKeyPair(instanceName);
     params = {
         ImageId: amiId,
@@ -119,6 +120,7 @@ const createInstance = async (instanceName, amiId, instanceType) => {
         MinCount: 1,
         MaxCount: 1,
         KeyName: keyPairName,
+        UserData: encodeduserData,
         TagSpecifications: [
             {
                 ResourceType: "instance",
@@ -132,11 +134,23 @@ const createInstance = async (instanceName, amiId, instanceType) => {
         ]
     }
     try {
-        const data = await ec2Client.send(new RunInstancesCommand(params)).then(resp => {
+        // const data = await ec2Client.send(new RunInstancesCommand(params)).then(resp => {
+        //     console.log(`${instanceName} instance of type ${instanceType} has created:${resp}`);
+        //     return resp.Instances[0];
+        // })
+        // const instance_pubic_id = await getPublicIpAddress(data.InstanceId);
+        // console.log(instance_pubic_id);
+        // pingAndTestSite(`${instance_pubic_id}:80`, 50)
+        return await ec2Client.send(new RunInstancesCommand(params)).then(async resp => {
             console.log(`${instanceName} instance of type ${instanceType} has created:${resp}`);
-            return resp;
+            const data = resp.Instances[0];
+            const instance_pubic_id = await getPublicIpAddress(data.InstanceId);
+            console.log(instance_pubic_id);
+            // pingAndTestSite(`${instance_pubic_id}:80`, 50)
+            // checkAvailablity(`http://${instance_pubic_id}:80`);
+            const isNginxAvailable = siteAvailabilityCheck(`http://${instance_pubic_id}:80`, 3000, 50);
+            return instance_pubic_id; // Return the public IP address
         })
-        console.log(data);
     } catch (error) {
         console.log("Error in creating instance", error);
     } finally {
@@ -162,4 +176,23 @@ const terminateInstance = (instanceid) => {
 
 }
 
-module.exports = { listInstances, createKeyPair, deleteKeyPair, startEc2Instance, createInstance, terminateInstance };
+const getPublicIpAddress = async (instanceId) => {
+    const params = {
+        InstanceIds: [instanceId],
+    };
+    try {
+        const data = await ec2Client.send(new DescribeInstancesCommand(params)).then((data) => {
+            console.log(`${instanceId} fetched successfully`);
+            return data;
+        })
+        const publicIp = data.Reservations[0].Instances[0].PublicIpAddress;
+        return publicIp;
+    } catch (error) {
+        console.log("Got errror while fetching instance ", instanceId)
+        console.log(error);
+    } finally {
+        ec2Client.destroy();
+    }
+}
+
+module.exports = { listInstances, createKeyPair, deleteKeyPair, startEc2Instance, createInstance, getPublicIpAddress };

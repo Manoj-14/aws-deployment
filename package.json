@@ -1,6 +1,6 @@
 {
-  "name": "manoj-m-simple-application-1",
-  "version": "1.0.0",
+  "name": "@manoj-14/manoj-m-simple-application-1",
+  "version": "1.0.2",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -13,13 +13,22 @@
     "@aws-sdk/client-ec2": "^3.741.0",
     "aws-js": "file:",
     "aws-sdk": "^2.1692.0",
+    "axios": "^1.7.9",
     "dotenv": "^16.4.7",
+    "http": "^0.0.1-security",
     "loading-cli": "^1.1.2",
     "manoj-m-simple-application": "file:",
     "manoj-m-simple-application-1": "file:",
+    "ping": "^0.4.4",
     "ssh2": "^1.16.0"
   },
   "bin": {
     "mycli": "./cmd.js"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "repository": {
+    "url": "https://github.com/Manoj-14/aws-deployment"
   }
 }

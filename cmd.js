@@ -10,7 +10,7 @@ const args = process.argv.slice(2);
 if (args.length !== 1) {
   console.log("Please mention the file name to run");
   process.exit(1);
-}
+} sw
 
 const filename = args[0];
 if (!fs.existsSync(filename)) {

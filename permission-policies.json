@@ -1,0 +1,27 @@
+{
+    "aws-ec2-s3-deployment": {
+        "name": "Ec2S3Deployment",
+        "decription": "Deployment by uploading code in s3 and deploy it in Ec2 ",
+        "permissions": [
+            [
+                "AdministratorAccess"
+            ],
+            [
+                "AmazonEC2FullAccess",
+                "AmazonS3FullAccess"
+            ]
+        ]
+    },
+    "aws-ec2-git-deployment": {
+        "name": "Ec2GitDeployment",
+        "decription": "Deploy app in ec2 by directly getting code from github",
+        "permissions": [
+            [
+                "AdministratorAccess"
+            ],
+            [
+                "AmazonEC2FullAccess"
+            ]
+        ]
+    }
+}
